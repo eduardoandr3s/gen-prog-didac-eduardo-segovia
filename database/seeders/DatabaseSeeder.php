@@ -21,5 +21,12 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        //llamada a los metodos seeder para crear los datos de pruebas
+        $this->call([
+            CicloFormativoSeeder::class,
+            ProgramacionDidacticaSeeder::class,
+
+        ]);
     }
 }
