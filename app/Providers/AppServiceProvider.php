@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
-use Nette\Utils\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
