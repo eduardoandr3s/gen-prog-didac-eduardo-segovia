@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CicloFormativoRequest;
 use App\Models\CicloFormativo;
 use Illuminate\Http\Request;
 
@@ -23,18 +24,32 @@ class CicloFormativoController extends Controller
 
     /**
      * Show the form for creating a new resource.
+     *
+     *
+     * retorno la vista para crear un ciclo
+     *
+     *
      */
     public function create()
     {
-        //
+        return view('ciclos.create');
     }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * Inserto el nuevo ciclo en la base de datos
+     *
+     * Al usar CicloFormativoRequest en vez de Request, se valida de forma automatica antes de entrar al método. Si falla antes,
+     * redirige a la vista anterior, mostrando los errores.
      */
-    public function store(Request $request)
+    public function store(CicloFormativoRequest $request)
     {
-        //
+        CicloFormativo::create($request->validated());
+
+        return redirect()
+        ->route('ciclos.index')
+        ->with('success','Ciclo formativo creado con éxito.');
     }
 
     /**
