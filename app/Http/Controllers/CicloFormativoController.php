@@ -67,18 +67,30 @@ class CicloFormativoController extends Controller
 
     /**
      * Show the form for editing the specified resource.
+     *
+     *
+     * Con esto muesto el formulario para editar un ciclo que existe
+     * laravel lo busca a través de su id
+     *
      */
-    public function edit(string $id)
+    public function edit(CicloFormativo $ciclo)
     {
-        //
+    return view('ciclos.edit', compact('ciclo'));
     }
 
     /**
      * Update the specified resource in storage.
+     *
+     * metodo para actualizar un ciclo formativo, una vez actualizado devuelve a la vista del ciclo actualizado
+     *
      */
-    public function update(Request $request, string $id)
+    public function update(CicloFormativoRequest $request, CicloFormativo $ciclo)
     {
-        //
+            $ciclo->update($request->validated());
+
+            return redirect()
+            ->route('ciclos.show', $ciclo)
+            ->with('success', 'ciclo fromativo actualizado con éxito.');
     }
 
     /**
