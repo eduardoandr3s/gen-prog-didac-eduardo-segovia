@@ -43,6 +43,18 @@
                             <td class="text-end">
                                 <a href="{{ route('ciclos.show', $ciclo) }}" class="btn btn-sm btn-outline-info">Ver</a>
                                 <a href="{{ route('ciclos.edit', $ciclo) }}" class="btn btn-sm btn-outline-warning">Editar</a>
+
+                                {{--
+                                    Formu para borrar con confirmación al usuario en caso de que canceleno envío el formulario
+                                --}}
+                                <form action="{{ route('ciclos.destroy', $ciclo) }}"
+                                    method="POST"
+                                    class="d-inline"
+                                    onsubmit="return confirm('¿Estás seguro de eliminar el ciclo &quot;{{ $ciclo->nombre }}&quot;? Esta acción no se puede deshacer.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach

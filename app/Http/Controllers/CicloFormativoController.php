@@ -16,7 +16,7 @@ class CicloFormativoController extends Controller
     {
         // inicializo la variable $ciclos con todos los ciclos ordenados alfabatecimante por la columna nombre
         $ciclos = CicloFormativo::orderBy('nombre')
-        ->paginate(10);
+            ->paginate(10);
 
         //retorno la vista pasandlole la variable $ciclos
         return view('ciclos.index', compact('ciclos'));
@@ -48,8 +48,8 @@ class CicloFormativoController extends Controller
         CicloFormativo::create($request->validated());
 
         return redirect()
-        ->route('ciclos.index')
-        ->with('success','Ciclo formativo creado con éxito.');
+            ->route('ciclos.index')
+            ->with('success', 'Ciclo formativo creado con éxito.');
     }
 
     /**
@@ -75,7 +75,7 @@ class CicloFormativoController extends Controller
      */
     public function edit(CicloFormativo $ciclo)
     {
-    return view('ciclos.edit', compact('ciclo'));
+        return view('ciclos.edit', compact('ciclo'));
     }
 
     /**
@@ -86,18 +86,32 @@ class CicloFormativoController extends Controller
      */
     public function update(CicloFormativoRequest $request, CicloFormativo $ciclo)
     {
-            $ciclo->update($request->validated());
+        $ciclo->update($request->validated());
 
-            return redirect()
+        return redirect()
             ->route('ciclos.show', $ciclo)
             ->with('success', 'ciclo fromativo actualizado con éxito.');
     }
 
     /**
      * Remove the specified resource from storage.
+     * Con este metodo elimino un ciclo formativo de la base de datos,
+     * Protejo del borrado a los ciclos que tienen programaciones asociadas,
+     * así, protejo la integridad de los datos y la referencia de la relación.
      */
-    public function destroy(string $id)
+    public function destroy(CicloFormativo $ciclo)
     {
-        //
+        // con este IF compruebo si hay programaciones asociadas, si es que las hay retorno al index, si no las hay ejecuto el delete.
+        if ($ciclo->programaciones()->exists()) {
+            return redirect()
+                ->route('ciclos.index')
+                ->with('error', 'No se puede eliminar el ciclo "' . $ciclo->nombre . '" porque tiene programaciones asociadas.');
+        }
+        $ciclo->delete();
+
+        //retorno a la vista del index una vez eliminado.
+        return redirect()
+            ->route('ciclos.index')
+            ->with('success', 'Ciclo formativo eliminado correctamente.');
     }
 }

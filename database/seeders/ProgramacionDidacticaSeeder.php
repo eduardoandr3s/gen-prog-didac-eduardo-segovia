@@ -2,23 +2,32 @@
 
 namespace Database\Seeders;
 
+use App\Models\CicloFormativo;
 use App\Models\ProgramacionDidactica;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ProgramacionDidacticaSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Carga 2 programaciones didácticas de ejemplo asociadas al ciclo DAW.
      */
     public function run(): void
     {
+        // Buscar daw por nombre
+        $cicloDAW = CicloFormativo::where('nombre', 'Desarrollo de Aplicaciones Web')->first();
 
-    //datos de pruebas que creará el seeder
+        // Si no existe, no se crea el seeder, aborto de la gestión
+
+        if (!$cicloDAW) {
+            $this->command->warn('Saltando ProgramacionDidacticaSeeder: no se encontró el ciclo "Desarrollo de Aplicaciones Web".');
+            return;
+        }
+
+        // Primera programación: Desarrollo Web en Entorno Servidor (160h del BOE).
         ProgramacionDidactica::create([
             'titulo' => 'Programación de Desarrollo Web en Entorno Servidor',
             'modulo' => 'Desarrollo Web en Entorno Servidor',
-            'ciclo_formativo_id' => 1,
+            'ciclo_formativo_id' => $cicloDAW->id,
             'curso_academico' => '2025-2026',
             'docente' => 'Profesor Demo',
             'horas_totales' => 160,
@@ -32,10 +41,11 @@ class ProgramacionDidacticaSeeder extends Seeder
             'observaciones' => 'Programación sujeta a posibles ajustes según el ritmo del grupo.',
         ]);
 
+        // Segunda programación: Desarrollo Web en Entorno Cliente (130h BOE).
         ProgramacionDidactica::create([
             'titulo' => 'Programación de Desarrollo Web en Entorno Cliente',
             'modulo' => 'Desarrollo Web en Entorno Cliente',
-            'ciclo_formativo_id' => 1,
+            'ciclo_formativo_id' => $cicloDAW->id,
             'curso_academico' => '2025-2026',
             'docente' => 'Profesor Demo',
             'horas_totales' => 130,

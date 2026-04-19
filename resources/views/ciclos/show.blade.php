@@ -11,6 +11,18 @@
         <div class="d-flex gap-2">
             <a href="{{ route('ciclos.index') }}" class="btn btn-outline-secondary">Volver</a>
             <a href="{{ route('ciclos.edit', $ciclo) }}" class="btn btn-warning">Editar</a>
+
+            {{--
+                Form para borrarr un ciclo, mismo comportamiento que en listado, pide confirmación para eliminar y si confirma puede cancelar
+            --}}
+            <form action="{{ route('ciclos.destroy', $ciclo) }}"
+                method="POST"
+                class="d-inline"
+                onsubmit="return confirm('¿Estás seguro de eliminar el ciclo &quot;{{ $ciclo->nombre }}&quot;? Esta acción no se puede deshacer.');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+            </form>
         </div>
     </div>
 
