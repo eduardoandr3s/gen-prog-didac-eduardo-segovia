@@ -54,10 +54,15 @@ class CicloFormativoController extends Controller
 
     /**
      * Display the specified resource.
+     *
+     * Muestro un ciclo con sus relaciones, en este caso las programaciones asociadas.
+     *
      */
-    public function show(string $id)
+    public function show(CicloFormativo $ciclo)
     {
-        //
+        $ciclo->load('programaciones');
+
+        return view('ciclos.show', compact('ciclo'));
     }
 
     /**
