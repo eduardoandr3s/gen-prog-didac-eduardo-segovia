@@ -12,13 +12,39 @@ class CicloFormativoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // inicializo la variable $ciclos con todos los ciclos ordenados alfabatecimante por la columna nombre
-        $ciclos = CicloFormativo::orderBy('nombre')
-            ->paginate(10);
+        // arranco la query builder para ir añadiendo filtros según lleguen por la URL
+        $query = CicloFormativo::query();
 
-        //retorno la vista pasandlole la variable $ciclos
+        // filtro 1: busco texto libre en nombre o familia profesional usando LIKE
+        if ($request->filled('q')) {
+            $buscar = $request->input('q');
+            $query->where(function ($q) use ($buscar) {
+                $q->where('nombre', 'LIKE', "%{$buscar}%")
+                    ->orWhere('familia_profesional', 'LIKE', "%{$buscar}%");
+            });
+        }
+        // filtro 2: grado exacto (Grado Superior / Grado Medio)
+        if ($request->filled('grado')) {
+            $query->where('grado', $request->input('grado'));
+        }
+
+        // filtro 3: modalidad exacta (Presencial / Semipresencial)
+        if ($request->filled('modalidad')) {
+            $query->where('modalidad', $request->input('modalidad'));
+        }
+
+        // filtro 4: estado activo/inactivo, convierto el string del select a booleano
+        if ($request->filled('estado')) {
+            $query->where('activo', $request->input('estado') === 'activos');
+        }
+
+        // pagino 10 por página y con withQueryString mantengo los filtros al cambiar de página
+        $ciclos = $query->orderBy('nombre')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('ciclos.index', compact('ciclos'));
     }
 

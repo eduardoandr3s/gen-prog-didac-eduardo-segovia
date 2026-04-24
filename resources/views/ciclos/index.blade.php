@@ -9,6 +9,62 @@
         </a>
     </div>
 
+{{-- FORMULARIO ED FILTROS --}}
+
+     <form action="{{ route('ciclos.index') }}" method="GET" class="card shadow-sm mb-4">
+      <div class="card-body">
+          <div class="row g-3 align-items-end">
+              <div class="col-md-4">
+                  <label for="q" class="form-label">Buscar</label>
+                  <input type="text" class="form-control" id="q" name="q"
+                         value="{{ request('q') }}"
+                         placeholder="Nombre o familia profesional...">
+              </div>
+              <div class="col-md-2">
+                  <label for="grado" class="form-label">Grado</label>
+                  <select class="form-select" id="grado" name="grado">
+                      <option value="">Todos</option>
+                      <option value="Grado Superior" {{ request('grado') === 'Grado Superior' ? 'selected' : '' }}>Grado Superior</option>
+                      <option value="Grado Medio" {{ request('grado') === 'Grado Medio' ? 'selected' : '' }}>Grado Medio</option>
+                  </select>
+              </div>
+              <div class="col-md-2">
+                  <label for="modalidad" class="form-label">Modalidad</label>
+                  <select class="form-select" id="modalidad" name="modalidad">
+                      <option value="">Todas</option>
+                      <option value="Presencial" {{ request('modalidad') === 'Presencial' ? 'selected' : '' }}>Presencial</option>
+                      <option value="Semipresencial" {{ request('modalidad') === 'Semipresencial' ? 'selected' : '' }}>Semipresencial</option>
+                  </select>
+              </div>
+              <div class="col-md-2">
+                  <label for="estado" class="form-label">Estado</label>
+                  <select class="form-select" id="estado" name="estado">
+                      <option value="">Todos</option>
+                      <option value="activos" {{ request('estado') === 'activos' ? 'selected' : '' }}>Activos</option>
+                      <option value="inactivos" {{ request('estado') === 'inactivos' ? 'selected' : '' }}>Inactivos</option>
+                  </select>
+              </div>
+              <div class="col-md-2 d-flex gap-2">
+                  <button type="submit" class="btn btn-primary flex-grow-1">Buscar</button>
+                  <a href="{{ route('ciclos.index') }}" class="btn btn-outline-secondary" title="Limpiar filtros">✕</a>
+              </div>
+          </div>
+      </div>
+  </form>
+
+  {{-- Contador de resultados con enlace para limpiar filtros si hay alguno activo --}}
+  <p class="text-muted small mb-3">
+      @if($ciclos->total() === 1)
+          1 ciclo encontrado
+      @else
+          {{ $ciclos->total() }} ciclos encontrados
+      @endif
+      @if(request()->hasAny(['q', 'grado', 'modalidad', 'estado']))
+          · <a href="{{ route('ciclos.index') }}">limpiar filtros</a>
+      @endif
+  </p>
+
+
     @if($ciclos->isEmpty())
         <div class="alert alert-info">
             No hay ciclos formativos registrados todavía.
