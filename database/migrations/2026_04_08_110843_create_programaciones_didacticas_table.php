@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('modulo', 150);
             $table->foreignId('ciclo_formativo_id')
                 ->constrained('ciclos_formativos')
+    // Defensa profunda,  mi controlador impide borrar ciclos con programaciones
+      // asociadas, pero  si alguien borra directamente en BD o desde otra capa,
+      // el cascade garantiza que no queden programaciones huérfanas y no se corrompa la BD.
                 ->onDelete('cascade');
             $table->string('curso_academico', 20);
             $table->string('docente', 150);
