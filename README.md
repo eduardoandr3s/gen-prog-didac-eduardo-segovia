@@ -1,59 +1,102 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+  # Generador Automático de Programaciones Didácticas
 
-## About Laravel
+  Trabajo Final de Grado — Curso 2025-2026
+  IES Sant Vicent Ferrer (Algemesí)
+  Autor: Eduardo Andrés Segovia Román
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+  ## Descripción del proyecto
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+  Aplicación web desarrollada en Laravel que permite gestionar los ciclos formativos del centro y las
+  programaciones didácticas asociadas a cada ciclo. El proyecto global está dividido en 6 módulos (A-F) y este
+  repositorio implementa el **Módulo B: CRUD de Ciclos Formativos**.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+  ## Módulo implementado: B (CRUD Ciclos Formativos)
 
-## Learning Laravel
+  El módulo permite:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+  - Listar los ciclos formativos con paginación (10 por página)
+  - Buscar por nombre o familia profesional y filtrar por grado, modalidad o estado
+  - Crear nuevos ciclos con validación en servidor
+  - Consultar el detalle de un ciclo y ver sus programaciones asociadas
+  - Editar ciclos existentes manteniendo los valores previos
+  - Eliminar ciclos (con protección contra borrado si tienen programaciones)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+  ## Requisitos previos
 
-## Laravel Sponsors
+  - PHP 8.2 o superior
+  - Composer
+  - Node.js LTS + NPM
+  - MySQL 5.7 o superior (XAMPP recomendado)
+  - Git
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+  ## Instalación
 
-### Premium Partners
+  ```bash
+  # 1. Clonar el repositorio
+  git clone https://github.com/eduardoandr3s/gen-prog-didac-eduardo-segovia.git
+  cd gen-prog-didac-eduardo-segovia
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+  # 2. Instalar dependencias PHP
+  composer install
 
-## Contributing
+  # 3. Instalar dependencias JS (para Vite)
+  npm install
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+  # 4. Copiar el archivo de entorno y configurarlo
+  cp .env.example .env
 
-## Code of Conduct
+  # 5. Generar la clave de la aplicación
+  php artisan key:generate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+  # 6. Crear la base de datos `generador_pd` en MySQL
+  #    (con utf8mb4_unicode_ci) y ajustar las credenciales en .env:
+  #    DB_DATABASE=generador_pd
+  #    DB_USERNAME=root
+  #    DB_PASSWORD=
 
-## Security Vulnerabilities
+  # 7. Ejecutar migraciones y cargar datos de prueba
+  php artisan migrate:fresh --seed
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+  # 8. Arrancar el servidor de desarrollo
+  php artisan serve
+  ```
 
-## License
+  Acceder a `http://localhost:8000` — la ruta raíz redirige automáticamente al listado de ciclos.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+  ## Estructura del módulo
+
+  - **Modelo:** `app/Models/CicloFormativo.php` (con relación `hasMany` hacia programaciones)
+  - **Controlador:** `app/Http/Controllers/CicloFormativoController.php` (resource con 7 métodos)
+  - **Form Request:** `app/Http/Requests/CicloFormativoRequest.php` (validación y mensajes en español)
+  - **Vistas:** `resources/views/ciclos/` (index, create, edit, show)
+  - **Migración:** `database/migrations/2026_04_08_070203_create_ciclos_formativos_table.php`
+  - **Seeder:** `database/seeders/CicloFormativoSeeder.php` (10 ciclos de 5 familias profesionales)
+
+  ## Decisiones técnicas destacadas
+
+  - **Route Model Binding** en todos los métodos que reciben un ciclo, evitando llamadas manuales a `find()`.
+  - **Form Request** en vez de validación inline: separa la lógica de validación y permite mensajes personalizados en
+  español.
+  - **Validación de unicidad** del nombre del ciclo con `Rule::unique()->ignore($this->ciclo)` para que no falle al
+  editar.
+  - **Defensa en profundidad en el borrado:** el controlador impide borrar un ciclo si tiene programaciones, y la
+  migración tiene `ON DELETE CASCADE` como segunda capa por si el borrado viene desde fuera de la app.
+  - **Eager loading** (`$ciclo->load('programaciones')`) en la vista de detalle para evitar N+1 queries.
+  - **Filtros persistentes al paginar** usando `withQueryString()`.
+  - **Atributo `novalidate`** en los formularios para que los errores vengan siempre del servidor en español, no del
+  navegador en inglés.
+
+  ## Datos de prueba incluidos
+
+  Tras ejecutar `php artisan migrate:fresh --seed` se cargan:
+
+  - 10 ciclos formativos de 5 familias profesionales (Informática, Administración, Comercio, Sanidad, Electricidad)
+  - 1 ciclo marcado como inactivo (para probar el badge "Inactivo")
+  - 2 programaciones didácticas asociadas al ciclo de Desarrollo de Aplicaciones Web
+
+  ## Documentación adicional
+
+  - Diagrama Entidad-Relación: `docs/diagrama-er.png`
+  - Descripción detallada de rutas: `docs/rutas.md`
+  - Manual de usuario: `docs/manual-usuario.md`
