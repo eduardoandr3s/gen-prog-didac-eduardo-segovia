@@ -1,102 +1,112 @@
-
-  # Generador Automático de Programaciones Didácticas
+ # Generador Automático de Programaciones Didácticas
 
   Trabajo Final de Grado — Curso 2025-2026
   IES Sant Vicent Ferrer (Algemesí)
   Autor: Eduardo Andrés Segovia Román
+  Repo: https://github.com/eduardoandr3s/gen-prog-didac-eduardo-segovia
 
-  ## Descripción del proyecto
+  ## De qué va el proyecto
 
-  Aplicación web desarrollada en Laravel que permite gestionar los ciclos formativos del centro y las
-  programaciones didácticas asociadas a cada ciclo. El proyecto global está dividido en 6 módulos (A-F) y este
-  repositorio implementa el **Módulo B: CRUD de Ciclos Formativos**.
+  He desarrollado una aplicación web en Laravel para gestionar los ciclos formativos del centro y las programaciones didácticas que cuelgan de cada uno. El
+  proyecto completo se reparte en 6 módulos (A-F) y a mí me ha tocado el **Módulo B: CRUD de Ciclos Formativos**, que es lo que está implementado en este
+  repo.
 
   ## Módulo implementado: B (CRUD Ciclos Formativos)
 
-  El módulo permite:
+  Lo que se puede hacer con el módulo:
 
-  - Listar los ciclos formativos con paginación (10 por página)
+  - Listar los ciclos formativos paginados de 10 en 10
   - Buscar por nombre o familia profesional y filtrar por grado, modalidad o estado
-  - Crear nuevos ciclos con validación en servidor
-  - Consultar el detalle de un ciclo y ver sus programaciones asociadas
-  - Editar ciclos existentes manteniendo los valores previos
-  - Eliminar ciclos (con protección contra borrado si tienen programaciones)
+  - Crear ciclos nuevos con validación en el servidor
+  - Ver el detalle de un ciclo y las programaciones que tiene asociadas
+  - Editar ciclos manteniendo los valores anteriores en el formulario
+  - Borrar ciclos (con protección si tienen programaciones asociadas)
 
-  ## Requisitos previos
+  ## Lo que necesitas para correrlo
 
   - PHP 8.2 o superior
   - Composer
   - Node.js LTS + NPM
-  - MySQL 5.7 o superior (XAMPP recomendado)
+  - MySQL 5.7 o superior (yo uso XAMPP)
   - Git
+  - Laravel 12 (se instala con Composer al hacer `composer install`)
 
   ## Instalación
 
   ```bash
-  # 1. Clonar el repositorio
+  # 1. Clono el repo
   git clone https://github.com/eduardoandr3s/gen-prog-didac-eduardo-segovia.git
   cd gen-prog-didac-eduardo-segovia
 
-  # 2. Instalar dependencias PHP
+  # 2. Instalo las dependencias de PHP
   composer install
 
-  # 3. Instalar dependencias JS (para Vite)
+  # 3. Instalo las dependencias de JS (para Vite)
   npm install
 
-  # 4. Copiar el archivo de entorno y configurarlo
+  # 4. Copio el archivo de entorno
   cp .env.example .env
 
-  # 5. Generar la clave de la aplicación
+  # 5. Genero la APP_KEY
   php artisan key:generate
 
-  # 6. Crear la base de datos `generador_pd` en MySQL
-  #    (con utf8mb4_unicode_ci) y ajustar las credenciales en .env:
+  # 6. Creo la BD `generador_pd` en MySQL (con utf8mb4_unicode_ci)
+  #    y ajusto las credenciales en .env:
   #    DB_DATABASE=generador_pd
   #    DB_USERNAME=root
   #    DB_PASSWORD=
 
-  # 7. Ejecutar migraciones y cargar datos de prueba
+  # 7. Lanzo migraciones + seeders
   php artisan migrate:fresh --seed
 
-  # 8. Arrancar el servidor de desarrollo
+  # 8. Arranco el servidor
   php artisan serve
   ```
 
-  Acceder a `http://localhost:8000` — la ruta raíz redirige automáticamente al listado de ciclos.
+  Abres `http://localhost:8000` y la raíz redirige sola al listado de ciclos.
 
   ## Estructura del módulo
 
-  - **Modelo:** `app/Models/CicloFormativo.php` (con relación `hasMany` hacia programaciones)
-  - **Controlador:** `app/Http/Controllers/CicloFormativoController.php` (resource con 7 métodos)
-  - **Form Request:** `app/Http/Requests/CicloFormativoRequest.php` (validación y mensajes en español)
+  - **Modelo:** `app/Models/CicloFormativo.php` — tiene el `hasMany` hacia programaciones
+  - **Controlador:** `app/Http/Controllers/CicloFormativoController.php` — resource con los 7 métodos
+  - **Form Request:** `app/Http/Requests/CicloFormativoRequest.php` — reglas y mensajes en español
   - **Vistas:** `resources/views/ciclos/` (index, create, edit, show)
   - **Migración:** `database/migrations/2026_04_08_070203_create_ciclos_formativos_table.php`
-  - **Seeder:** `database/seeders/CicloFormativoSeeder.php` (10 ciclos de 5 familias profesionales)
+  - **Seeder:** `database/seeders/CicloFormativoSeeder.php` — 10 ciclos repartidos en 5 familias
 
-  ## Decisiones técnicas destacadas
+  ## Decisiones técnicas que destacaría
 
-  - **Route Model Binding** en todos los métodos que reciben un ciclo, evitando llamadas manuales a `find()`.
-  - **Form Request** en vez de validación inline: separa la lógica de validación y permite mensajes personalizados en
-  español.
-  - **Validación de unicidad** del nombre del ciclo con `Rule::unique()->ignore($this->ciclo)` para que no falle al
-  editar.
-  - **Defensa en profundidad en el borrado:** el controlador impide borrar un ciclo si tiene programaciones, y la
-  migración tiene `ON DELETE CASCADE` como segunda capa por si el borrado viene desde fuera de la app.
-  - **Eager loading** (`$ciclo->load('programaciones')`) en la vista de detalle para evitar N+1 queries.
-  - **Filtros persistentes al paginar** usando `withQueryString()`.
-  - **Atributo `novalidate`** en los formularios para que los errores vengan siempre del servidor en español, no del
-  navegador en inglés.
+  - **Route Model Binding** en todos los métodos que reciben un ciclo, así me ahorro andar haciendo `find()` a mano.
+  - **Form Request** en lugar de validar dentro del controlador: separo la lógica de validación y puedo personalizar los mensajes en español de forma
+  limpia.
+  - **Validación de unicidad** del nombre con `Rule::unique()->ignore($this->ciclo)`. El `ignore` está para que no falle al editar un ciclo (no choca
+  consigo mismo).
+  - **Defensa en profundidad en el borrado:** el controlador no deja borrar un ciclo si tiene programaciones, y la migración tiene `ON DELETE CASCADE` como
+  segunda capa por si el borrado viniera desde fuera de la app (phpMyAdmin u otro módulo).
+  - **Eager loading** con `$ciclo->load('programaciones')` en la vista de detalle, así me evito el problema del N+1.
+  - **Filtros que se mantienen al paginar** usando `withQueryString()` en el `paginate`.
+  - **Atributo `novalidate`** en los formularios para que los errores los pinte el servidor en español y no el navegador en inglés.
 
-  ## Datos de prueba incluidos
+  ## Datos de prueba
 
-  Tras ejecutar `php artisan migrate:fresh --seed` se cargan:
+  Cuando lanzas `php artisan migrate:fresh --seed` se cargan:
 
-  - 10 ciclos formativos de 5 familias profesionales (Informática, Administración, Comercio, Sanidad, Electricidad)
+  - 10 ciclos formativos repartidos en 5 familias profesionales (Informática, Administración, Comercio, Sanidad, Electricidad)
   - 1 ciclo marcado como inactivo (para probar el badge "Inactivo")
   - 2 programaciones didácticas asociadas al ciclo de Desarrollo de Aplicaciones Web
 
+  ## Tests
+
+  Hay un test básico en `tests/Feature/ExampleTest.php` que comprueba que la raíz `/` redirige al listado de ciclos. Para ejecutarlo:
+
+  ```bash
+  php artisan test
+  ```
+
   ## Documentación adicional
 
-  - Diagrama Entidad-Relación: `docs/diagrama-er.png`
-  - Descripción detallada de rutas: `docs/rutas.md`
-  - Manual de usuario: `docs/manual-usuario.md`
+  Dentro de la carpeta `docs/` están:
+
+  - `diagrama-er.png` — diagrama Entidad-Relación de la BD
+  - `rutas.md` — descripción detallada de las rutas y controladores
+  - `manual-usuario.md` — manual de uso con capturas de cada pantalla
